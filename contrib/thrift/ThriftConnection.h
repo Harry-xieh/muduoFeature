@@ -1,11 +1,10 @@
 #ifndef MUDUO_CONTRIB_THRIFT_THRIFTCONNECTION_H
 #define MUDUO_CONTRIB_THRIFT_THRIFTCONNECTION_H
 
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/noncopyable.hpp>
-
 #include "muduo/net/TcpConnection.h"
 
+#include <boost/enable_shared_from_this.hpp>
+#include <boost/noncopyable.hpp>
 #include <thrift/protocol/TProtocol.h>
 #include <thrift/transport/TBufferTransports.h>
 #include <thrift/transport/TTransportUtils.h>
@@ -19,48 +18,45 @@ using apache::thrift::transport::TTransportException;
 
 class ThriftServer;
 
-class ThriftConnection : boost::noncopyable,
-                         public boost::enable_shared_from_this<ThriftConnection>
+class ThriftConnection : boost::noncopyable, public boost::enable_shared_from_this<ThriftConnection>
 {
- public:
-  enum State
-  {
-    kExpectFrameSize,
-    kExpectFrame
-  };
+public:
+    enum State
+    {
+        kExpectFrameSize,
+        kExpectFrame
+    };
 
-  ThriftConnection(ThriftServer* server, const muduo::net::TcpConnectionPtr& conn);
+    ThriftConnection(ThriftServer* server, const muduo::net::TcpConnectionPtr& conn);
 
- private:
-  void onMessage(const muduo::net::TcpConnectionPtr& conn,
-                 muduo::net::Buffer* buffer,
-                 muduo::Timestamp receiveTime);
+private:
+    void onMessage(const muduo::net::TcpConnectionPtr& conn, muduo::net::Buffer* buffer, muduo::Timestamp receiveTime);
 
-  void process();
+    void process();
 
-  void close();
+    void close();
 
- private:
-  ThriftServer* server_;
-  muduo::net::TcpConnectionPtr conn_;
+private:
+    ThriftServer*                server_;
+    muduo::net::TcpConnectionPtr conn_;
 
-  boost::shared_ptr<TNullTransport> nullTransport_;
+    boost::shared_ptr<TNullTransport> nullTransport_;
 
-  boost::shared_ptr<TMemoryBuffer> inputTransport_;
-  boost::shared_ptr<TMemoryBuffer> outputTransport_;
+    boost::shared_ptr<TMemoryBuffer> inputTransport_;
+    boost::shared_ptr<TMemoryBuffer> outputTransport_;
 
-  boost::shared_ptr<TTransport> factoryInputTransport_;
-  boost::shared_ptr<TTransport> factoryOutputTransport_;
+    boost::shared_ptr<TTransport> factoryInputTransport_;
+    boost::shared_ptr<TTransport> factoryOutputTransport_;
 
-  boost::shared_ptr<TProtocol> inputProtocol_;
-  boost::shared_ptr<TProtocol> outputProtocol_;
+    boost::shared_ptr<TProtocol> inputProtocol_;
+    boost::shared_ptr<TProtocol> outputProtocol_;
 
-  boost::shared_ptr<TProcessor> processor_;
+    boost::shared_ptr<TProcessor> processor_;
 
-  enum State state_;
-  uint32_t frameSize_;
+    enum State state_;
+    uint32_t   frameSize_;
 };
 
 typedef boost::shared_ptr<ThriftConnection> ThriftConnectionPtr;
 
-#endif  // MUDUO_CONTRIB_THRIFT_THRIFTCONNECTION_H
+#endif // MUDUO_CONTRIB_THRIFT_THRIFTCONNECTION_H

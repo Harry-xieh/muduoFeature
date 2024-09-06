@@ -14,19 +14,16 @@
 
 #include "muduo/base/noncopyable.h"
 
-namespace muduo
-{
-namespace net
-{
+namespace muduo {
+namespace net {
 
 class BoilerPlate : noncopyable
 {
- public:
-
- private:
+public:
+private:
 };
 
-}
-}
+} // namespace net
+} // namespace muduo
 
-#endif  // MUDUO_NET_BOILERPLATE_H
+#endif // MUDUO_NET_BOILERPLATE_H

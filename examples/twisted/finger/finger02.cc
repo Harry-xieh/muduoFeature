@@ -6,8 +6,8 @@ using namespace muduo::net;
 
 int main()
 {
-  EventLoop loop;
-  TcpServer server(&loop, InetAddress(1079), "Finger");
-  server.start();
-  loop.loop();
+    EventLoop loop;
+    TcpServer server(&loop, InetAddress(1079), "Finger");
+    server.start();
+    loop.loop();
 }

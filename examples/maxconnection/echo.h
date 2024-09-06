@@ -6,23 +6,19 @@
 // RFC 862
 class EchoServer
 {
- public:
-  EchoServer(muduo::net::EventLoop* loop,
-             const muduo::net::InetAddress& listenAddr,
-             int maxConnections);
+public:
+    EchoServer(muduo::net::EventLoop* loop, const muduo::net::InetAddress& listenAddr, int maxConnections);
 
-  void start();
+    void start();
 
- private:
-  void onConnection(const muduo::net::TcpConnectionPtr& conn);
+private:
+    void onConnection(const muduo::net::TcpConnectionPtr& conn);
 
-  void onMessage(const muduo::net::TcpConnectionPtr& conn,
-                 muduo::net::Buffer* buf,
-                 muduo::Timestamp time);
+    void onMessage(const muduo::net::TcpConnectionPtr& conn, muduo::net::Buffer* buf, muduo::Timestamp time);
 
-  muduo::net::TcpServer server_;
-  int numConnected_; // should be atomic_int
-  const int kMaxConnections_;
+    muduo::net::TcpServer server_;
+    int                   numConnected_; // should be atomic_int
+    const int             kMaxConnections_;
 };
 
-#endif  // MUDUO_EXAMPLES_MAXCONNECTION_ECHO_H
+#endif // MUDUO_EXAMPLES_MAXCONNECTION_ECHO_H

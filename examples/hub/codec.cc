@@ -4,50 +4,46 @@ using namespace muduo;
 using namespace muduo::net;
 using namespace pubsub;
 
-ParseResult pubsub::parseMessage(Buffer* buf,
-                                 string* cmd,
-                                 string* topic,
-                                 string* content)
+ParseResult pubsub::parseMessage(Buffer* buf, string* cmd, string* topic, string* content)
 {
-  ParseResult result = kError;
-  const char* crlf = buf->findCRLF();
-  if (crlf)
-  {
-    const char* space = std::find(buf->peek(), crlf, ' ');
-    if (space != crlf)
+    ParseResult result = kError;
+    const char* crlf   = buf->findCRLF();
+    if (crlf)
     {
-      cmd->assign(buf->peek(), space);
-      topic->assign(space+1, crlf);
-      if (*cmd == "pub")
-      {
-        const char* start = crlf + 2;
-        crlf = buf->findCRLF(start);
-        if (crlf)
+        const char* space = std::find(buf->peek(), crlf, ' ');
+        if (space != crlf)
         {
-          content->assign(start, crlf);
-          buf->retrieveUntil(crlf+2);
-          result = kSuccess;
+            cmd->assign(buf->peek(), space);
+            topic->assign(space + 1, crlf);
+            if (*cmd == "pub")
+            {
+                const char* start = crlf + 2;
+                crlf              = buf->findCRLF(start);
+                if (crlf)
+                {
+                    content->assign(start, crlf);
+                    buf->retrieveUntil(crlf + 2);
+                    result = kSuccess;
+                }
+                else
+                {
+                    result = kContinue;
+                }
+            }
+            else
+            {
+                buf->retrieveUntil(crlf + 2);
+                result = kSuccess;
+            }
         }
         else
         {
-          result = kContinue;
+            result = kError;
         }
-      }
-      else
-      {
-        buf->retrieveUntil(crlf+2);
-        result = kSuccess;
-      }
     }
     else
     {
-      result = kError;
+        result = kContinue;
     }
-  }
-  else
-  {
-    result = kContinue;
-  }
-  return result;
+    return result;
 }
-

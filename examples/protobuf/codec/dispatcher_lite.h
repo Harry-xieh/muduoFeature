@@ -13,58 +13,50 @@
 #include "muduo/net/Callbacks.h"
 
 #include <google/protobuf/message.h>
-
 #include <map>
 
 typedef std::shared_ptr<google::protobuf::Message> MessagePtr;
 
 class ProtobufDispatcherLite : muduo::noncopyable
 {
- public:
-  typedef std::function<void (const muduo::net::TcpConnectionPtr&,
-                                const MessagePtr&,
-                                muduo::Timestamp)> ProtobufMessageCallback;
+public:
+    typedef std::function<void(const muduo::net::TcpConnectionPtr&, const MessagePtr&, muduo::Timestamp)>
+        ProtobufMessageCallback;
 
-  // ProtobufDispatcher()
-  //   : defaultCallback_(discardProtobufMessage)
-  // {
-  // }
+    // ProtobufDispatcher()
+    //   : defaultCallback_(discardProtobufMessage)
+    // {
+    // }
 
-  explicit ProtobufDispatcherLite(const ProtobufMessageCallback& defaultCb)
-    : defaultCallback_(defaultCb)
-  {
-  }
+    explicit ProtobufDispatcherLite(const ProtobufMessageCallback& defaultCb) : defaultCallback_(defaultCb) {}
 
-  void onProtobufMessage(const muduo::net::TcpConnectionPtr& conn,
-                         const MessagePtr& message,
-                         muduo::Timestamp receiveTime) const
-  {
-    CallbackMap::const_iterator it = callbacks_.find(message->GetDescriptor());
-    if (it != callbacks_.end())
+    void onProtobufMessage(const muduo::net::TcpConnectionPtr& conn, const MessagePtr& message,
+                           muduo::Timestamp receiveTime) const
     {
-      it->second(conn, message, receiveTime);
+        CallbackMap::const_iterator it = callbacks_.find(message->GetDescriptor());
+        if (it != callbacks_.end())
+        {
+            it->second(conn, message, receiveTime);
+        }
+        else
+        {
+            defaultCallback_(conn, message, receiveTime);
+        }
     }
-    else
+
+    void registerMessageCallback(const google::protobuf::Descriptor* desc, const ProtobufMessageCallback& callback)
     {
-      defaultCallback_(conn, message, receiveTime);
+        callbacks_[desc] = callback;
     }
-  }
 
-  void registerMessageCallback(const google::protobuf::Descriptor* desc,
-                               const ProtobufMessageCallback& callback)
-  {
-    callbacks_[desc] = callback;
-  }
+private:
+    // static void discardProtobufMessage(const muduo::net::TcpConnectionPtr&,
+    //                                    const MessagePtr&,
+    //                                    muduo::Timestamp);
 
- private:
-  // static void discardProtobufMessage(const muduo::net::TcpConnectionPtr&,
-  //                                    const MessagePtr&,
-  //                                    muduo::Timestamp);
-
-  typedef std::map<const google::protobuf::Descriptor*, ProtobufMessageCallback> CallbackMap;
-  CallbackMap callbacks_;
-  ProtobufMessageCallback defaultCallback_;
+    typedef std::map<const google::protobuf::Descriptor*, ProtobufMessageCallback> CallbackMap;
+    CallbackMap                                                                    callbacks_;
+    ProtobufMessageCallback                                                        defaultCallback_;
 };
 
-#endif  // MUDUO_EXAMPLES_PROTOBUF_CODEC_DISPATCHER_LITE_H
-
+#endif // MUDUO_EXAMPLES_PROTOBUF_CODEC_DISPATCHER_LITE_H

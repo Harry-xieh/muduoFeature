@@ -1,8 +1,8 @@
 #include "examples/idleconnection/echo.h"
-#include <stdio.h>
-
 #include "muduo/base/Logging.h"
 #include "muduo/net/EventLoop.h"
+
+#include <stdio.h>
 
 using namespace muduo;
 using namespace muduo::net;
@@ -26,17 +26,16 @@ void testHash()
 
 int main(int argc, char* argv[])
 {
-  // testHash();
-  EventLoop loop;
-  InetAddress listenAddr(2007);
-  int idleSeconds = 10;
-  if (argc > 1)
-  {
-    idleSeconds = atoi(argv[1]);
-  }
-  LOG_INFO << "pid = " << getpid() << ", idle seconds = " << idleSeconds;
-  EchoServer server(&loop, listenAddr, idleSeconds);
-  server.start();
-  loop.loop();
+    // testHash();
+    EventLoop   loop;
+    InetAddress listenAddr(2007);
+    int         idleSeconds = 10;
+    if (argc > 1)
+    {
+        idleSeconds = atoi(argv[1]);
+    }
+    LOG_INFO << "pid = " << getpid() << ", idle seconds = " << idleSeconds;
+    EchoServer server(&loop, listenAddr, idleSeconds);
+    server.start();
+    loop.loop();
 }
-

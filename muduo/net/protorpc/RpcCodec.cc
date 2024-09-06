@@ -11,27 +11,21 @@
 #include "muduo/base/Logging.h"
 #include "muduo/net/Endian.h"
 #include "muduo/net/TcpConnection.h"
-
-#include "muduo/net/protorpc/rpc.pb.h"
 #include "muduo/net/protorpc/google-inl.h"
+#include "muduo/net/protorpc/rpc.pb.h"
 
 using namespace muduo;
 using namespace muduo::net;
 
-namespace
+namespace {
+int ProtobufVersionCheck()
 {
-  int ProtobufVersionCheck()
-  {
     GOOGLE_PROTOBUF_VERIFY_VERSION;
     return 0;
-  }
-  int dummy __attribute__ ((unused)) = ProtobufVersionCheck();
 }
+int dummy __attribute__((unused)) = ProtobufVersionCheck();
+} // namespace
 
-namespace muduo
-{
-namespace net
-{
-const char rpctag [] = "RPC0";
-}
-}
+namespace muduo { namespace net {
+const char rpctag[] = "RPC0";
+}} // namespace muduo::net
